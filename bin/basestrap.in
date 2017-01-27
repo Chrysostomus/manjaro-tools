@@ -33,6 +33,7 @@ usage() {
     echo " -d             Allow installation to a non-mountpoint directory"
     echo " -G             Avoid copying the host's pacman keyring to the target"
     echo " -i             Avoid auto-confirmation of package selections"
+    echo " -n             Avoid reinstalling up-to-date packages"
     echo " -M             Avoid copying the host's mirrorlist to the target"
     echo " -h             Print this help message"
     echo ''
@@ -59,6 +60,7 @@ while getopts ${opts} arg; do
         d) directory=true ;;
         c) hostcache=true ;;
         i) interactive=true ;;
+        i) needed=true ;;
         G) copykeyring=false ;;
         M) copymirrorlist=false ;;
         :) echo "invalid argument ${arg}:$OPTARG"; usage 1;;
@@ -76,6 +78,8 @@ pacman_args=("${@:-base}")
 ${hostcache} && pacman_args+=(--cachedir="$newroot/var/cache/pacman/pkg")
 
 ${interactive} && pacman_args+=(--noconfirm)
+
+${needed} && pacman_args+=(--needed)
 
 [[ -n $pacman_config ]] && pacman_args+=(--config="$pacman_config")
 
